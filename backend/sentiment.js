@@ -79,30 +79,38 @@ async function analyzeSentimentOfFace(fileName) {
   return vals;
 }
 
-// async function finalAnalysis(text, fileName) {
-//   let textScore = await analyzeSentimentOfText(text);
-//   let visionArr = await analyzeSentimentOfFace(fileName);
 
-//   //enum to string issue
-//   //Iterating through visionArr to find visionScore
-//   var visionScore = 0;
-//   var i;
-//   for (i = 0; i < 2; i++) {
-//     console.log(visionArr[i]);
-//     if (visionArr[i] == 'VERY_UNLIKELY') { visionScore += 2; }
-//     else if (visionArr[i] == 'UNLIKELY') { visionScore += 1; }
-//     else if (visionArr[i] == 'POSSIBLE') { visionScore -= 1; }
-//     else if (visionArr[i] == 'LIKELY') { visionScore -= 1; }
-//     else if (visionArr[i] == 'VERY_LIKELY') { visionScore -= 2; }
-//   }
+ async function finalAnalysis(text, fileName) {
+   let textScore = await analyzeSentimentOfText(text);
+   let visionArr = await analyzeSentimentOfFace(fileName);
 
-//   var mood = textScore + visionScore;
+   //enum to string issue
+   //Iterating through visionArr to find visionScore
+   var visionScore = 0;
+   var i;
+   for (i = 0; i < 2; i++) {
 
-//   console.log(`${mood}`);
+     if (visionArr[i] == 'VERY_UNLIKELY') { visionScore += 2; }
+     else if (visionArr[i] == 'UNLIKELY') { visionScore += 1; }
+     else if (visionArr[i] == 'POSSIBLE') { visionScore -= 1; }
+     else if (visionArr[i] == 'LIKELY') { visionScore -= 1; }
+     else if (visionArr[i] == 'VERY_LIKELY') { visionScore -= 2; }
+   }
 
-// }
+   var mood = textScore + visionScore;
 
-//finalAnalysis("I hate pizza it is the worst food", "../Smiling_pic.jpg");
+
+
+   if (mood <= -3) {return 1;} //User is having a very bad day
+   else if (mood > -3 && mood <= -1) {return 2;} //User is having a bad ish day
+   else if (mood > -1 && mood <= 1) {return 3;} //User is having an okay day
+   else if (mood > 1 && mood <= 3) {return 4;} //User is having a decent day
+   else if (mood > 3) {return 5;} //User is having a good day
+ }
+
+
 
 //analyzeSentimentOfText("I hate pizza it is the worst food");
 //analyzeSentimentOfFace("../Smiling_pic.jpg")
+//let idk = finalAnalysis("I hate pizza it is the worst food", "../Smiling_pic.jpg");
+//console.log(finalAnalysis("I hate pizza it is the worst food", "../Smiling_pic.jpg"));
