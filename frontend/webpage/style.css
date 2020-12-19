@@ -5,6 +5,11 @@
     width: 320px;
     padding-left: 12px;
   }
+
+  body {
+    font-family: sans-serif;
+    margin: 30px;
+  }
   
   .field-placeholder {
     position: absolute;
