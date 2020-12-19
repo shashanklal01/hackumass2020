@@ -80,34 +80,46 @@ async function analyzeSentimentOfFace(fileName) {
 }
 
 
- async function finalAnalysis(text, fileName) {
-   let textScore = await analyzeSentimentOfText(text);
-   let visionArr = await analyzeSentimentOfFace(fileName);
+async function finalAnalysis(text, fileName) {
 
-   //enum to string issue
-   //Iterating through visionArr to find visionScore
-   var visionScore = 0;
-   var i;
-   for (i = 0; i < 2; i++) {
+  let textScore = await analyzeSentimentOfText(text);
+  let visionArr = await analyzeSentimentOfFace(fileName);
 
-     if (visionArr[i] == 'VERY_UNLIKELY') { visionScore += 2; }
-     else if (visionArr[i] == 'UNLIKELY') { visionScore += 1; }
-     else if (visionArr[i] == 'POSSIBLE') { visionScore -= 1; }
-     else if (visionArr[i] == 'LIKELY') { visionScore -= 1; }
-     else if (visionArr[i] == 'VERY_LIKELY') { visionScore -= 2; }
-   }
+  return new Promise((resolve, reject) => {
 
-   var mood = textScore + visionScore;
+    //enum to string issue
+    //Iterating through visionArr to find visionScore
+    var visionScore = 0;
+    var i;
+    for (i = 0; i < 2; i++) {
+
+      if (visionArr[i] == 'VERY_UNLIKELY') { visionScore += 2; }
+      else if (visionArr[i] == 'UNLIKELY') { visionScore += 1; }
+      else if (visionArr[i] == 'POSSIBLE') { visionScore -= 1; }
+      else if (visionArr[i] == 'LIKELY') { visionScore -= 1; }
+      else if (visionArr[i] == 'VERY_LIKELY') { visionScore -= 2; }
+    }
+    var mood = textScore + visionScore;
 
 
+    let idk = 0
+    if (mood <= -3) { idk = 1; } //User is having a very bad day
+    else if (mood > -3 && mood <= -1) { idk = 2; } //User is having a bad ish day
+    else if (mood > -1 && mood <= 1) { idk = 3; } //User is having an okay day
+    else if (mood > 1 && mood <= 3) { idk = 4; } //User is having a decent day
+    else if (mood > 3) { idk = 5; } //User is having a good day
 
-   if (mood <= -3) {return 1;} //User is having a very bad day
-   else if (mood > -3 && mood <= -1) {return 2;} //User is having a bad ish day
-   else if (mood > -1 && mood <= 1) {return 3;} //User is having an okay day
-   else if (mood > 1 && mood <= 3) {return 4;} //User is having a decent day
-   else if (mood > 3) {return 5;} //User is having a good day
- }
+    resolve(idk);
+  });
+}
 
+finalAnalysis("I am very happy", "../Smiling_pic.jpg").then(res => {
+  console.log(res);
+}).catch(err => {
+console.log(err)
+throw err; // Not needed
+});
+//finalAnalysis().then(res => console.log(res))
 
 
 //analyzeSentimentOfText("I hate pizza it is the worst food");
